@@ -7,24 +7,28 @@ const rimraf = require('rimraf')
 /* Services Get TikTok Data */
 async function getTrending () {
 	const posts = await TiktokScraper.trend('', {
-		number: 50,
+		number: 2,
 		download: true,
 		sessionList: [ 'sid_tt=601a98c8eeea0111d6cde18e509e1ab6' ],
 	})
 }
 
 async function getMusicTikTok (music_id = '6548327243720952577') {
+	console.log('hello')
 	const posts = await TiktokScraper.music(music_id, {
 		number: 2,
-		download: true,
+		download: false,
+		proxy: 'http://api.scraperapi.com/?api_key=4afc21fa2cf3816decd4e239720faad1&url=https://www.tiktok.com',
 		fileName: 'music',
 		sessionList: [ 'sid_tt=601a98c8eeea0111d6cde18e509e1ab6' ],
 	})
+	console.log(posts)
 }
+
 
 async function getHashTagTikToks (hashtag = 'lesbian') {
 	const posts = await TiktokScraper.hashtag(hashtag, {
-		number: 50,
+		number: 2,
 		download: true,
 		sessionList: [ 'sid_tt=601a98c8eeea0111d6cde18e509e1ab6' ],
 	})
@@ -48,14 +52,14 @@ function convertVideoSync (file) {
 }
 
 // Combines Clips Together
-function combineClipsSync (input_option, videoname) {
+function combineClipsSync (input_option, videoname, type) {
 	return new Promise(resolve => {
 		ffmpeg(input_option)
 			.videoCodec('copy')
 			.audioCodec('copy')
 			.outputOption('-bsf:v h264_mp4toannexb')
 			.outputOption('-f mpegts')
-			.saveToFile(`./videos/${ videoname }.mp4`)
+			.saveToFile(`./videos/${ type }/${ videoname }.mp4`)
 			.on('end', () => {
 				console.log('done')
 				resolve(videoname)
@@ -106,7 +110,7 @@ async function createTrendTikTok () {
 	
 	// // Create Commans
 	const input_option = 'concat:' + ts_files.join('|')
-	await combineClipsSync(input_option, foldername + Date.now())
+	await combineClipsSync(input_option, foldername + Date.now(), 'trending')
 	// // Delete Folder
 	rimraf(foldername, () => {
 		console.log('deleting folder')
@@ -133,7 +137,7 @@ async function createMusicTiktok (music_id = '6912957665299745542') {
 	
 	// // Create Commans
 	const input_option = 'concat:' + ts_files.join('|')
-	await combineClipsSync(input_option, foldername)
+	await combineClipsSync(input_option, foldername, 'music')
 	// Delete Folder
 	rimraf(foldername, () => {
 		console.log('deleting folder')
@@ -160,7 +164,7 @@ async function createHashTagTikTok (hastag = 'lesbian') {
 	
 	// // Create Commans
 	const input_option = 'concat:' + ts_files.join('|')
-	await combineClipsSync(input_option, foldername)
+	await combineClipsSync(input_option, foldername, 'hashtag')
 	// // Delete Folder
 	rimraf(foldername, () => {
 		console.log('deleting folder')

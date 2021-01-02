@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-tiktok-scraper hashtag summer -n 2 -d --session sid_tt=601a98c8eeea0111d6cde18e509e1ab6
+tiktok-scraper hashtag summer -n 2 -d --session sid_tt=601a98c8eeea0111d6cde18e509e1ab6 -p http://api.scraperapi.com
 #for file in ./trend/*; do
 #  ffmpeg -i "$file" -c copy -bsf:v h264_mp4toannexb -f mpegts "$file.ts"
 #done
